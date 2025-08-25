@@ -1,0 +1,17 @@
+package utils
+
+import (
+	"github.com/go-playground/validator/v10"
+)
+
+var Validate *validator.Validate
+
+func init() {
+	Validate = validator.New()
+
+	// Register custom validators
+	_ = Validate.RegisterValidation("future_date", ValidateFutureDate)
+	_ = Validate.RegisterValidation("time_format", ValidateTimeFormat)
+	_ = Validate.RegisterValidation("password_strength", ValidatePasswordStrength)
+	_ = Validate.RegisterValidation("valid_mobile_number", ValidMobileNumber)
+}
