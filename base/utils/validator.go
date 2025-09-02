@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -91,18 +92,17 @@ func msgForTag(field string, tag string, param string) string {
 		return fmt.Sprintf("%s must be less than %s px", field, param)
 	case "password_strength":
 		return "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+	case "before_today":
+		return fmt.Sprintf("%s must be before today", field)
+	case "after_today":
+		return fmt.Sprintf("%s must be after today", field)
+	case "not_weekend":
+		return fmt.Sprintf("%s cannot be on a weekend", field)
+	case "min_age":
+		return fmt.Sprintf("%s Must be at least %s years old", field, param)
 	default:
 		return "Invalid value"
 	}
-}
-
-// Custom validators (future_date)
-func ValidateFutureDate(fl validator.FieldLevel) bool {
-	date, err := time.Parse("2006-01-02", fl.Field().String())
-	if err != nil {
-		return false
-	}
-	return date.After(time.Now())
 }
 
 // Custom validators (time_format)
@@ -127,4 +127,85 @@ func ValidatePasswordStrength(fl validator.FieldLevel) bool {
 func ValidMobileNumber(fl validator.FieldLevel) bool {
 	matched, _ := regexp.MatchString(`^\+?[0-9]{10,15}$`, fl.Field().String())
 	return matched
+}
+
+// Custom validators (future_date)
+func ValidateFutureDate(fl validator.FieldLevel) bool {
+	date, err := time.Parse("2006-01-02", fl.Field().String())
+	if err != nil {
+		return false
+	}
+	return date.After(time.Now())
+}
+
+// validatePastDate checks if the date is in the past
+func validatePastDate(fl validator.FieldLevel) bool {
+	date, err := time.Parse("2006-01-02", fl.Field().String())
+	if err != nil {
+		return false
+	}
+	return date.Before(time.Now())
+}
+
+// validateBeforeToday checks if the date is before today (excluding today)
+func validateBeforeToday(fl validator.FieldLevel) bool {
+	date, err := time.Parse("2006-01-02", fl.Field().String())
+	if err != nil {
+		return false
+	}
+
+	// Get today's date at midnight
+	today := time.Now().Truncate(24 * time.Hour)
+	return date.Before(today)
+}
+
+// validateAfterToday checks if the date is after today (excluding today)
+func validateAfterToday(fl validator.FieldLevel) bool {
+	date, err := time.Parse("2006-01-02", fl.Field().String())
+	if err != nil {
+		return false
+	}
+
+	// Get today's date at midnight
+	today := time.Now().Truncate(24 * time.Hour)
+	return date.After(today)
+}
+
+// validateNotWeekend checks if the date is not a weekend (Saturday or Sunday)
+func validateNotWeekend(fl validator.FieldLevel) bool {
+	date, err := time.Parse("2006-01-02", fl.Field().String())
+	if err != nil {
+		return false
+	}
+
+	// Sunday = 0, Saturday = 6
+	weekday := date.Weekday()
+	return weekday != time.Sunday && weekday != time.Saturday
+}
+
+// validateMinAge checks if the person is at least X years old
+func validateMinAge(fl validator.FieldLevel) bool {
+	date, err := time.Parse("2006-01-02", fl.Field().String())
+	if err != nil {
+		return false
+	}
+
+	// Default minimum age is 18
+	minAge := 18
+	if param := fl.Param(); param != "" {
+		if age, err := strconv.Atoi(param); err == nil {
+			minAge = age
+		}
+	}
+
+	// Calculate age
+	now := time.Now()
+	age := now.Year() - date.Year()
+
+	// Adjust age if birthday hasn't occurred yet this year
+	if now.YearDay() < date.YearDay() {
+		age--
+	}
+
+	return age >= minAge
 }

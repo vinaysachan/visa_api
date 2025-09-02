@@ -13,7 +13,8 @@ func SetupVisaRoutes(router *gin.RouterGroup) {
 	{
 		visaController := controllers.NewVisaController()
 
-		v1.GET("/evisa/form_data", visaController.ApplicationFormData)
+		v1.GET("/evisa/application_form_data", visaController.ApplicationFormData)
+		v1.POST("/evisa/application_form_submit", visaController.ApplicationFormSubmit)
 	}
 
 }
