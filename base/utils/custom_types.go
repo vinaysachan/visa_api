@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 )
 
 type StringOrNumber string
@@ -21,4 +22,8 @@ func (s *StringOrNumber) UnmarshalJSON(data []byte) error {
 	}
 
 	return fmt.Errorf("invalid type for mobile_number")
+}
+
+func (s StringOrNumber) ToUint64() (uint64, error) {
+	return strconv.ParseUint(string(s), 10, 64)
 }

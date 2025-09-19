@@ -6,4 +6,5 @@ import (
 
 type VisaAction interface {
 	VisaApplyFormData() (*request.VisaApplyFormDataResponse, error)
+	VisaApplySave(request.VisaApplicationDataRequest) (*request.VisaApplicationApplyResponse, error)
 }

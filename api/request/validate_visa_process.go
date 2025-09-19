@@ -6,22 +6,22 @@ import (
 )
 
 type CountryResponse struct {
-	ID   uint   `json:"id"`
+	ID   uint64 `json:"id"`
 	Name string `json:"name"`
 }
 
 type ArrivalPortResponse struct {
-	ID   uint   `json:"id"`
+	ID   uint64 `json:"id"`
 	Name string `json:"name"`
 }
 
 type VisaTypeResponse struct {
-	ID   uint   `json:"id"`
+	ID   uint64 `json:"id"`
 	Name string `json:"name"`
 }
 
 type ApplicationTypeResponse struct {
-	ID        uint               `json:"id"`
+	ID        uint64             `json:"id"`
 	Name      string             `json:"name"`
 	VisaTypes []VisaTypeResponse `json:"visa_types"`
 }
@@ -34,15 +34,15 @@ type VisaApplyFormDataResponse struct {
 }
 
 type VisaApplicationDataRequest struct {
-	ApplicationType string               `json:"application_type" validate:"required"`
-	FName           string               `json:"fname" validate:"required,min=2,max=100"`
-	MName           *string              `json:"mname" validate:"omitempty,min=2,max=100"`
-	LName           string               `json:"lname" validate:"required,min=2,max=100"`
+	ApplicationType utils.StringOrNumber `json:"application_type" validate:"required"`
+	Fname           string               `json:"fname" validate:"required,min=2,max=100"`
+	Mname           *string              `json:"mname" validate:"omitempty,min=2,max=100"`
+	Lname           string               `json:"lname" validate:"required,min=2,max=100"`
 	PassportType    string               `json:"passport_type" validate:"required"`
-	Nationality     string               `json:"nationality"  validate:"required"`
-	PortOfArrival   string               `json:"portofarrival" validate:"required"`
-	PassportNumber  string               `json:"passport_number" validate:"required"`
-	VisaType        string               `json:"visa_type" validate:"required"`
+	Nationality     uint64               `json:"nationality"  validate:"required"`
+	PortOfArrival   uint64               `json:"portofarrival" validate:"required"`
+	PassportNumber  utils.StringOrNumber `json:"passport_number" validate:"required"`
+	VisaType        uint64               `json:"visa_type" validate:"required"`
 	DateOfBirth     string               `json:"date_of_birth" validate:"required,datetime=2006-01-02,before_today,min_age=1"`
 	ArrivalDate     string               `json:"arrival_date" validate:"required,datetime=2006-01-02,before_today"`
 	Phone           utils.StringOrNumber `json:"phone" validate:"required,min=10,max=15,valid_mobile_number"`
@@ -55,4 +55,10 @@ func ValidateApplicationRequestData(c *gin.Context) (*VisaApplicationDataRequest
 		return nil, false
 	}
 	return &request, true
+}
+
+type VisaApplicationApplyResponse struct {
+	Message       string `json:"message"`
+	ID            uint64 `json:"id"`
+	ApplicationId string `json:"application_id"`
 }

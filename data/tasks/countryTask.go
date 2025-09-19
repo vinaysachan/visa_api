@@ -14,6 +14,12 @@ func GetActiveCountryList() (*[]models.AppCountry, error) {
 	return &countries, nil
 }
 
+func FindCountryByID(id uint64) (*models.AppCountry, error) {
+	var country models.AppCountry
+	err := config.MainDB.First(&country, id).Error
+	return &country, err
+}
+
 func GetActiveArrivalPortList() (*[]models.AppArrivalPort, error) {
 	var arrivalPorts []models.AppArrivalPort
 	err := config.MainDB.Where("status = ?", 1).Find(&arrivalPorts).Error
@@ -21,4 +27,10 @@ func GetActiveArrivalPortList() (*[]models.AppArrivalPort, error) {
 		return nil, err
 	}
 	return &arrivalPorts, nil
+}
+
+func FindArrivalPortByID(id uint64) (*models.AppArrivalPort, error) {
+	var arrival_port models.AppArrivalPort
+	err := config.MainDB.First(&arrival_port, id).Error
+	return &arrival_port, err
 }
