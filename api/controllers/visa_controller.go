@@ -39,3 +39,8 @@ func (U *VisaController) ApplicationFormSubmit(context *gin.Context) {
 	}
 	context.JSON(http.StatusOK, resp)
 }
+
+func (U *VisaController) BasicDetailFormData(context *gin.Context) {
+	//Validate Request
+
+}

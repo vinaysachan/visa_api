@@ -15,6 +15,7 @@ func SetupVisaRoutes(router *gin.RouterGroup) {
 
 		v1.GET("/evisa/application_form_data", visaController.ApplicationFormData)
 		v1.POST("/evisa/application_form_submit", visaController.ApplicationFormSubmit)
+		v1.GET("/evisa/basic_detail_form_data", visaController.BasicDetailFormData)
 	}
 
 }

@@ -1,5 +1,13 @@
 package models
 
+import (
+	"fmt"
+	"time"
+
+	"github.com/vinaysachan/visa_api/base/utils"
+	"gorm.io/gorm"
+)
+
 type AppApplicationType struct {
 	ID     uint64 `gorm:"primaryKey;autoIncrement" json:"id"`
 	Name   string `gorm:"type:varchar(500);not null;" json:"name"`
@@ -21,7 +29,7 @@ type AppVisaType struct {
 	ID                 uint64  `gorm:"primaryKey;autoIncrement" json:"id"`
 	ApplicationTypeID  uint64  `gorm:"not null;default:0" json:"application_type_id"`
 	Name               string  `gorm:"type:varchar(250);not null" json:"name"`
-	Validitiy          int16   `gorm:"not null;default:1" json:"validitiy"`
+	Validitiy          uint16  `gorm:"not null;default:1" json:"validitiy"`
 	Entry              *string `gorm:"type:varchar(200)" json:"entry,omitempty"`
 	CurrencyCode       string  `gorm:"type:enum('USD','GBP');not null;default:'USD'" json:"currency_code"`
 	Amount             float64 `gorm:"type:decimal(10,2);not null" json:"amount"`
@@ -39,25 +47,30 @@ func (AppVisaType) TableName() string {
 }
 
 type AppApplication struct {
-	ID                  uint64  `gorm:"primaryKey;autoIncrement" json:"id"`
-	ApplicationID       *string `gorm:"type:varchar(50)" json:"application_id,omitempty"`
-	ApplicationTypeID   *uint64 `gorm:"type:int unsigned" json:"application_type_id,omitempty"`
-	ApplicationTypeName *string `gorm:"type:varchar(300)" json:"application_type_name,omitempty"`
-	VisaTypeID          *uint64 `gorm:"type:int unsigned" json:"visa_type_id,omitempty"`
-	VisaTypeName        *string `gorm:"type:varchar(300)" json:"visa_type_name,omitempty"`
-	VisaValiditiy       uint16  `gorm:"type:smallint unsigned;default:0" json:"visa_validitiy"`
-	VisaEntry           *string `gorm:"type:varchar(100)" json:"visa_entry,omitempty"`
-	VisaCurrencyCode    *string `gorm:"type:varchar(10)" json:"visa_currency_code,omitempty"`
-	VisaAmount          float64 `gorm:"type:decimal(10,2);default:0.00" json:"visa_amount"`
-	Fname               string  `gorm:"type:varchar(100)" json:"fname"`
-	Mname               string  `gorm:"type:varchar(100)" json:"mname"`
-	Lname               string  `gorm:"type:varchar(100)" json:"lname,omitempty"`
-	// PassportType           *string    `gorm:"type:varchar(100)" json:"passport_type,omitempty"`
-	// Nationality            *uint16    `gorm:"type:smallint unsigned" json:"nationality,omitempty"`
-	// NationalityCode        *string    `gorm:"type:char(2)" json:"nationality_code,omitempty"`
-	// PortOfArrivalID        *uint      `gorm:"type:int unsigned" json:"port_of_arrival,omitempty"`
-	// PortExit               *uint      `gorm:"type:int unsigned" json:"port_exit,omitempty"`
-	// PassportNo             *string    `gorm:"type:varchar(100)" json:"passportno,omitempty"`
+	ID                  uint64               `gorm:"primaryKey;autoIncrement" json:"id"`
+	ApplicationID       *string              `gorm:"type:varchar(50)" json:"application_id,omitempty"`
+	ApplicationTypeID   *uint64              `gorm:"type:int unsigned" json:"application_type_id,omitempty"`
+	ApplicationTypeName *string              `gorm:"type:varchar(300)" json:"application_type_name,omitempty"`
+	VisaTypeID          *uint64              `gorm:"type:int unsigned" json:"visa_type_id,omitempty"`
+	VisaTypeName        *string              `gorm:"type:varchar(300)" json:"visa_type_name,omitempty"`
+	VisaValiditiy       uint16               `gorm:"type:smallint unsigned;default:0" json:"visa_validitiy"`
+	VisaEntry           *string              `gorm:"type:varchar(100)" json:"visa_entry,omitempty"`
+	VisaCurrencyCode    *string              `gorm:"type:varchar(10)" json:"visa_currency_code,omitempty"`
+	VisaAmount          float64              `gorm:"type:decimal(10,2);default:0.00" json:"visa_amount"`
+	Fname               string               `gorm:"type:varchar(100)" json:"fname"`
+	Mname               string               `gorm:"type:varchar(100)" json:"mname"`
+	Lname               string               `gorm:"type:varchar(100)" json:"lname,omitempty"`
+	PassportType        *string              `gorm:"type:varchar(100)" json:"passport_type,omitempty"`
+	Nationality         *uint64              `gorm:"type:smallint unsigned" json:"nationality,omitempty"`
+	NationalityCode     *string              `gorm:"type:char(2)" json:"nationality_code,omitempty"`
+	PortOfArrivalID     *uint64              `gorm:"column:portofarrival;type:int unsigned" json:"port_of_arrival,omitempty"`
+	PortExit            *uint64              `gorm:"type:int unsigned" json:"port_exit,omitempty"`
+	Email               string               `gorm:"type:varchar(100)" json:"email,omitempty"`
+	Passportno          utils.StringOrNumber `gorm:"type:varchar(100)" json:"passportno,omitempty"`
+	DOB                 *time.Time           `gorm:"type:date" json:"dob,omitempty"`
+	DateOfArrival       *time.Time           `gorm:"type:date" json:"date_of_arrival,omitempty"`
+	Phone               utils.StringOrNumber `gorm:"type:varchar(100)" json:"phone,omitempty"`
+
 	// PassportIssuePlace     *string    `gorm:"type:varchar(100)" json:"passport_issue_place,omitempty"`
 	// PassportIssueDate      *time.Time `gorm:"type:date" json:"passport_issue_date,omitempty"`
 	// PassportExpiryDate     *time.Time `gorm:"type:date" json:"passport_expiry_date,omitempty"`
@@ -66,10 +79,9 @@ type AppApplication struct {
 	// OtherICIssuePlace      *string    `gorm:"type:varchar(100)" json:"other_ic_issue_place,omitempty"`
 	// OtherICIssueDate       *time.Time `gorm:"type:date" json:"other_ic_issue_date,omitempty"`
 	// OtherICNationality     *uint16    `gorm:"type:smallint unsigned" json:"other_ic_nationality,omitempty"`
-	// DOB                    *time.Time `gorm:"type:date" json:"dob,omitempty"`
-	// DateOfArrival          *time.Time `gorm:"type:date" json:"date_of_arrival,omitempty"`
-	// Email                  *string    `gorm:"type:varchar(100)" json:"email,omitempty"`
-	// Phone                  *string    `gorm:"type:varchar(100)" json:"phone,omitempty"`
+
+	//
+	//
 	// HavePreviousName       *string    `gorm:"type:char(1)" json:"have_previous_name,omitempty"`
 	// PreviousSurname        *string    `gorm:"type:varchar(100)" json:"previous_surname,omitempty"`
 	// PreviousName           *string    `gorm:"type:varchar(100)" json:"previous_name,omitempty"`
@@ -151,4 +163,14 @@ type AppApplication struct {
 // TableName overrides the default pluralized name
 func (AppApplication) TableName() string {
 	return "app_application"
+}
+
+// AfterCreate GORM hook
+func (a *AppApplication) AfterCreate(tx *gorm.DB) (err error) {
+	// Generate ApplicationID as combination or sum
+	a.ApplicationID = &[]string{fmt.Sprintf("%s%d", *a.NationalityCode, a.ID)}[0]
+
+	// Update record
+	err = tx.Model(a).Update("application_id", a.ApplicationID).Error
+	return
 }

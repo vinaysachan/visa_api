@@ -44,7 +44,7 @@ type VisaApplicationDataRequest struct {
 	PassportNumber  utils.StringOrNumber `json:"passport_number" validate:"required"`
 	VisaType        uint64               `json:"visa_type" validate:"required"`
 	DateOfBirth     string               `json:"date_of_birth" validate:"required,datetime=2006-01-02,before_today,min_age=1"`
-	ArrivalDate     string               `json:"arrival_date" validate:"required,datetime=2006-01-02,before_today"`
+	DateOfArrival   string               `json:"date_of_arrival" validate:"required,datetime=2006-01-02,after_today"`
 	Phone           utils.StringOrNumber `json:"phone" validate:"required,min=10,max=15,valid_mobile_number"`
 	Email           string               `json:"email" validate:"required,email,max=255"`
 }

@@ -64,6 +64,11 @@ func Cleanup() error {
 	return config.MainDB.Where("expires_at < ?", time.Now()).Delete(&CacheEntry{}).Error
 }
 
+// Cleanup All cache
+func CleanUpAll() error {
+	return config.MainDB.Delete(&CacheEntry{}).Error
+}
+
 // Remember checks cache, if not found executes callback, stores result and returns it.
 func Remember[T any](key string, ttl time.Duration, callback func() (T, error)) (T, error) {
 	var result T

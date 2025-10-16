@@ -116,12 +116,56 @@ func (v *visaActionImpl) VisaApplySave(req request.VisaApplicationDataRequest) (
 		return nil, errors.New("visa type's Application Type not found")
 	}
 
-	application := models.AppApplication{
-		ApplicationTypeID: &applicationTypeID,
-		Fname:             req.Fname,
-		Mname:             *req.Mname,
-		Lname:             req.Lname,
+	// Parse date strings to time.Time
+	dob, err := time.Parse("2006-01-02", req.DateOfBirth)
+	if err != nil {
+		return nil, errors.New("invalid date_of_birth format (use YYYY-MM-DD)")
 	}
+
+	// Parse date strings to time.Time
+	DateOfArrival, err := time.Parse("2006-01-02", req.DateOfArrival)
+	if err != nil {
+		return nil, errors.New("invalid date_of_birth format (use YYYY-MM-DD)")
+	}
+
+	application := models.AppApplication{
+		ApplicationTypeID:   &applicationTypeID,
+		ApplicationTypeName: &visaType.ApplicationType.Name,
+		VisaTypeID:          &visaType.ID,
+		VisaTypeName:        &visaType.Name,
+		VisaValiditiy:       visaType.Validitiy,
+		VisaEntry:           visaType.Entry,
+		VisaCurrencyCode:    &visaType.CurrencyCode,
+		VisaAmount:          visaType.Amount,
+		Fname:               req.Fname,
+		Mname:               *req.Mname,
+		Lname:               req.Lname,
+		PassportType:        &req.PassportType,
+		Nationality:         &appCountry.ID,
+		NationalityCode:     &appCountry.Code,
+		PortOfArrivalID:     &arrivalPort.ID,
+		Email:               req.Email,
+		Passportno:          req.PassportNumber,
+		DOB:                 &dob,
+		DateOfArrival:       &DateOfArrival,
+		Phone:               req.Phone,
+	}
+
+	// Phone           utils.StringOrNumber `json:"phone" validate:"required,min=10,max=15,valid_mobile_number"`
+
+	// "application_type"      :   1,
+	// "fname"                 :   "John",
+	// "mname"                 :   "Mack",
+	// "lname"                 :   "Doe",
+	// "passport_type"         :   "Ordinary Passport",
+	// "nationality"           :   99,
+	// "portofarrival"         :   6,
+	// "visa_type"             :   9,
+	// "email"                 :   "vnyscn@gmail.com",
+	// "date_of_birth"         :   "2020-01-11",
+	// "arrival_date"          :   "2020-10-11",
+	// "phone"                 :   "918510070060",
+	// "passport_number"       :   "234234234AS"
 
 	if err := tasks.CreateApplication(&application); err != nil {
 		return nil, errors.New("could not save Applictaion")
